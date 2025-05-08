@@ -15,4 +15,7 @@ if __name__ == "__main__":
     thread2 = Thread(target=fx2, daemon=True)
     thread1.start()
     thread2.start()
+    
+    sleep(2)
+    
     print("Main Exit")

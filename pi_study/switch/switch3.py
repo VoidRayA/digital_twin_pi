@@ -3,6 +3,27 @@ from time import sleep
 
 gpio.setmode(gpio.BCM)
 
+class Led:
+    
+    def __init__(self, pin, color):
+        self.pin = pin
+        self.color = color
+        gpio.setup(self.pin, gpio.OUT)
+        gpio.output(self.pin, gpio.LOW)
+        
+    def blink(self, count):
+        for _ in range(count):
+            gpio.output(self.pin, gpio.HIGH)
+            sleep(time)
+            gpio.output(self.pin, gpio.LOW)
+            sleep(time)
+            
+    def ledOn(self):
+        gpio.output(self.pin, gpio.HIGH)
+        
+    def ledOff(self):
+        gpio.output(self.pin, gpio.LOW)
+
 class Button:
 
     def __init__(self, pin, onPressed):
