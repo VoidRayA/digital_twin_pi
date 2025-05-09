@@ -77,11 +77,11 @@ try:
         for button in buttons:
             button.waitPressed()
             prePassword = button
-            if len(prePassword) == 3:
+            if len(str(prePassword)) == 3:
                 break
 
         if password == prePassword:
-            for i in len(prePassword):
+            for i in len(str(prePassword)):
                 leds[i].blink(3, 0.5)
         else:
             leds[0].blink(3, 0.5)
