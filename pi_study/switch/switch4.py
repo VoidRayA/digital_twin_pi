@@ -98,3 +98,4 @@ try:
 except KeyboardInterrupt:
     pass
 finally:
+    gpio.cleanup()
