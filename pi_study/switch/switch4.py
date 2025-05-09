@@ -54,24 +54,24 @@ def success_sequence():
         for i in range(3):
             clear_leds()
             leds[i].ledOn()
-            sleep(0.3)
+            sleep(0.5)
     clear_leds()
 
 def failure_sequence():
     for _ in range(3):
         for led in leds:
             led.ledOn()
-        sleep(0.3)
+        sleep(0.5)
         for led in leds:
             led.ledOff()
-        sleep(0.3)
+        sleep(0.5)
 
 def handle_input(digit):
     global input_buffer
     input_buffer += str(digit)
 
     leds[digit - 1].ledOn()
-    sleep(0.3)
+    sleep(0.5)
     leds[digit - 1].ledOff()
 
     if len(input_buffer) == 3:
@@ -81,11 +81,9 @@ def handle_input(digit):
             failure_sequence()
         input_buffer = ""
 
-buttons = [
-    Button(13, lambda: handle_input(1)),
+buttons = (Button(13, lambda: handle_input(1)),
     Button(19, lambda: handle_input(2)),
-    Button(26, lambda: handle_input(3)),
-]
+    Button(26, lambda: handle_input(3)))
 
 try:
     while True:
