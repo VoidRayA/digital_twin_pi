@@ -41,7 +41,7 @@ class Button:
     def checkPressed(self, currentState):
         return currentState == gpio.HIGH and self.prevState == gpio.LOW
 
-leds = [Led(16, "RED"), Led(20, "YELLOW"), Led(21, "GREEN")]
+leds = (Led(16, "RED"), Led(20, "YELLOW"), Led(21, "GREEN"))
 input_buffer = ""
 password = "123"
 
@@ -66,7 +66,7 @@ def failure_sequence():
             led.ledOff()
         sleep(0.3)
 
-def input(digit):
+def handle_input(digit):
     global input_buffer
     input_buffer += str(digit)
 
@@ -82,9 +82,9 @@ def input(digit):
         input_buffer = ""
 
 buttons = [
-    Button(13, lambda: input(1)),
-    Button(19, lambda: input(2)),
-    Button(26, lambda: input(3)),
+    Button(13, lambda: handle_input(1)),
+    Button(19, lambda: handle_input(2)),
+    Button(26, lambda: handle_input(3)),
 ]
 
 try:
