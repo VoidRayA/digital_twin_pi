@@ -82,9 +82,9 @@ def handle_input(digit):
             failure_sequence()
         input_buffer = ""
 
-buttons = (Button(13, lambda: handle_input(1)),
-    Button(19, lambda: handle_input(2)),
-    Button(26, lambda: handle_input(3)))
+buttons = (Button(13, handle_input(1)),
+    Button(19, handle_input(2)),
+    Button(26, handle_input(3)))
 
 try:
     while True:
