@@ -46,45 +46,9 @@ leds = (Led(16, "RED"), Led(20, "YELLOW"), Led(21, "GREEN"))
 input_buffer = ""
 password = "123"
 
-def clear_leds():
-    for led in leds:
-        led.ledOff()
-
-def success_sequence():
-    for _ in range(3):
-        for i in range(3):
-            clear_leds()
-            leds[i].ledOn()
-            sleep(0.5)
-    clear_leds()
-
-def failure_sequence():
-    for _ in range(3):
-        for led in leds:
-            led.ledOn()
-        sleep(0.5)
-        for led in leds:
-            led.ledOff()
-        sleep(0.5)
-
-def handle_input(digit):
-    global input_buffer
-    input_buffer += str(digit)
-
-    leds[digit - 1].ledOn()
-    sleep(0.5)
-    leds[digit - 1].ledOff()
-
-    if len(input_buffer) == 3:
-        if input_buffer == password:
-            success_sequence()
-        else:
-            failure_sequence()
-        input_buffer = ""
-
-buttons = (Button(13, handle_input(1)),
-    Button(19, handle_input(2)),
-    Button(26, handle_input(3)))
+buttons = (Button(13, leds[0].blink(10, 0.5)),
+    Button(19, leds[1].blink(10, 0.5)),
+    Button(26, leds[2].blink(10, 0.5)))
 
 try:
     while True:
