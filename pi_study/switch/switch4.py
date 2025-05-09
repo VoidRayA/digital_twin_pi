@@ -80,13 +80,13 @@ try:
             if len(str(prePassword)) == 3:
                 break
 
-        if password == prePassword:
-            for i in len(str(prePassword)):
-                leds[i].blink(3, 0.5)
-        else:
-            leds[0].blink(3, 0.5)
-            leds[1].blink(3, 0.5)
-            leds[2].blink(3, 0.5)
+        # if password == prePassword:
+        #     for i in len(str(prePassword)):
+        #         leds[i].blink(3, 0.5)
+        # else:
+        #     leds[0].blink(3, 0.5)
+        #     leds[1].blink(3, 0.5)
+        #     leds[2].blink(3, 0.5)
 
 except KeyboardInterrupt:
     pass
