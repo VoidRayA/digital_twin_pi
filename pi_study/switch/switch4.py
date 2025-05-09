@@ -3,98 +3,98 @@ from time import sleep
 
 gpio.setmode(gpio.BCM)
 
-# === 클래스 정의 ===
 class Led:
-    def __init__(self, pin):
+
+    def __init__(self, pin, color):
         self.pin = pin
+        self.color = color
         gpio.setup(self.pin, gpio.OUT)
         gpio.output(self.pin, gpio.LOW)
 
-    def blink(self, count=1, delay=0.3):
+    def blink(self, count, time):
         for _ in range(count):
             gpio.output(self.pin, gpio.HIGH)
-            sleep(delay)
+            sleep(time)
             gpio.output(self.pin, gpio.LOW)
-            sleep(delay)
+            sleep(time)
 
-    def on(self):
+    def ledOn(self):
         gpio.output(self.pin, gpio.HIGH)
 
-    def off(self):
+    def ledOff(self):
         gpio.output(self.pin, gpio.LOW)
 
 class Button:
-    def __init__(self, pin, on_pressed):
+
+    def __init__(self, pin, onPressed):
         self.pin = pin
-        self.prev_state = gpio.LOW
-        self.on_pressed = on_pressed
+        self.prevState = gpio.LOW
+        self.onPressed = onPressed
         gpio.setup(self.pin, gpio.IN, pull_up_down=gpio.PUD_DOWN)
 
-    def wait_pressed(self):
-        current_state = gpio.input(self.pin)
-        if current_state == gpio.HIGH and self.prev_state == gpio.LOW:
-            self.on_pressed()
-        self.prev_state = current_state
+    def waitPressed(self):
+        currentState = gpio.input(self.pin)
+        if self.checkPressed(currentState):
+            self.onPressed()
+        self.prevState = currentState
         sleep(0.05)
 
-# === 설정 ===
-led_pins = [16, 20, 21]  # 빨강, 노랑, 초록
-button_pins = [13, 19, 26]  # 버튼 1, 2, 3
+    def checkPressed(self, currentState):
+        return currentState == gpio.HIGH and self.prevState == gpio.LOW
 
-leds = [Led(pin) for pin in led_pins]
+leds = (Led(16, "RED"), Led(20, "YELLOW"), Led(21, "GREEN"))
 input_buffer = ""
 password = "123"
 
-# === LED 시퀀스 ===
 def all_leds_off():
     for led in leds:
-        led.off()
+        led.ledOff()
 
 def success_sequence():
     for _ in range(3):
         for i in range(3):
             all_leds_off()
-            leds[i].on()
-            sleep(0.3)
+            leds[i].ledOn()
+            sleep(0.5)
     all_leds_off()
 
 def failure_sequence():
     for _ in range(3):
         for led in leds:
-            led.on()
-        sleep(0.3)
+            led.ledOn()
+        sleep(0.5)
         all_leds_off()
-        sleep(0.3)
+        sleep(0.5)
 
-# === 입력 처리 ===
+def ledRedFunction():
+    handle_input(1)
+
+def ledYellowFunction():
+    handle_input(2)
+
+def ledGreenFunction():
+    handle_input(3)
+
 def handle_input(digit):
     global input_buffer
     input_buffer += str(digit)
-    leds[digit - 1].blink()
+    leds[digit - 1].blink(1, 0.5)
 
     if len(input_buffer) == 3:
-        print(f"입력된 비밀번호: {input_buffer}")
         if input_buffer == password:
             success_sequence()
         else:
             failure_sequence()
         input_buffer = ""
 
-# === 버튼 설정 ===
-buttons = [
-    Button(button_pins[0], lambda: handle_input(1)),
-    Button(button_pins[1], lambda: handle_input(2)),
-    Button(button_pins[2], lambda: handle_input(3))
-]
+buttons = (Button(13, ledRedFunction), Button(19, ledYellowFunction), Button(26, ledGreenFunction))
 
-# === 메인 루프 ===
 try:
-    print("비밀번호 입력을 시작하세요.")
     while True:
         for button in buttons:
-            button.wait_pressed()
+            button.waitPressed()
 
 except KeyboardInterrupt:
-    print("프로그램 종료")
+    pass
 finally:
     gpio.cleanup()
