@@ -1,8 +1,9 @@
 import RPi.GPIO as gpio
 from time import sleep
-from threading import Thread
 
+gpio.cleanup()
 gpio.setmode(gpio.BCM)
+gpio.setwarnings(False)
 
 class Led:
     def __init__(self, pin, color):
