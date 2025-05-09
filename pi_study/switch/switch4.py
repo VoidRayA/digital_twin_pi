@@ -43,8 +43,6 @@ class Button:
     def checkPressed(self, currentState):
         return currentState == gpio.HIGH and self.prevState == gpio.LOW
 
-password = "111"
-
 leds = (Led(16, "RED"), Led(20, "YELLOW"), Led(21, "GREEN"))
 
 def ledRedFunction():
@@ -71,14 +69,16 @@ def ledGreenFunction():
 buttons = (Button(13, ledRedFunction), Button(19, ledYellowFunction), Button(26, ledGreenFunction))
 
 try:
+    password = "111"
     prePassword = ""
 
     while True:
         for button in buttons:
             button.waitPressed()
-            prePassword = button
-            if len(str(prePassword)) == 3:
-                break
+
+            # prePassword = button
+            # if len(str(prePassword)) == 3:
+            #     break
 
         # if password == prePassword:
         #     for i in len(str(prePassword)):
