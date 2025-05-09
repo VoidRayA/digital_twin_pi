@@ -1,11 +1,11 @@
 import RPi.GPIO as gpio
 from time import sleep
+from threading import Thread
 
-gpio.cleanup()
 gpio.setmode(gpio.BCM)
-gpio.setwarnings(False)
 
 class Led:
+
     def __init__(self, pin, color):
         self.pin = pin
         self.color = color
@@ -26,6 +26,7 @@ class Led:
         gpio.output(self.pin, gpio.LOW)
 
 class Button:
+
     def __init__(self, pin, onPressed):
         self.pin = pin
         self.prevState = gpio.LOW
@@ -42,55 +43,58 @@ class Button:
     def checkPressed(self, currentState):
         return currentState == gpio.HIGH and self.prevState == gpio.LOW
 
+password = "111"
+
 leds = (Led(16, "RED"), Led(20, "YELLOW"), Led(21, "GREEN"))
-input_buffer = ""
-password = "123"
 
-def clear_leds():
-    for led in leds:
-        led.ledOff()
+def ledRedFunction():
+    def threadRun():
+        leds[0].blink(3, 0.5)
 
-def success_sequence():
-    for _ in range(3):
-        for i in range(3):
-            clear_leds()
-            leds[i].ledOn()
-            sleep(0.5)
-    clear_leds()
+    thread = Thread(target=threadRun, daemon=True)
+    thread.start()
 
-def failure_sequence():
-    for _ in range(3):
-        for led in leds:
-            led.ledOn()
-        sleep(0.5)
-        for led in leds:
-            led.ledOff()
-        sleep(0.5)
+def ledYellowFunction():
+    def threadRun():
+        leds[1].blink(3, 0.5)
 
-def handle_input(digit):
-    global input_buffer
-    input_buffer += str(digit)
+    thread = Thread(target=threadRun, daemon=True)
+    thread.start()
 
-    leds[digit - 1].ledOn()
-    sleep(0.5)
-    leds[digit - 1].ledOff()
+def ledGreenFunction():
+    def threadRun():
+        leds[2].blink(3, 0.5)
 
-    if len(input_buffer) == 3:
-        if input_buffer == password:
-            success_sequence()
-        else:
-            failure_sequence()
-        input_buffer = ""
+    thread = Thread(target=threadRun, daemon=True)
+    thread.start()
 
-buttons = (Button(13, lambda: handle_input(1)),
-    Button(19, lambda: handle_input(2)),
-    Button(26, lambda: handle_input(3)))
+buttons = (Button(13, ledRedFunction), Button(19, ledYellowFunction), Button(26, ledGreenFunction))
 
 try:
+    prePassword = ""
+
     while True:
         for button in buttons:
             button.waitPressed()
+            prePassword = button
+            if len(str(prePassword)) == 3:
+                break
+
+        if password == prePassword:
+            for i in len(str(prePassword)):
+                leds[i].blink(3, 0.5)
+        else:
+            leds[0].blink(3, 0.5)
+            leds[1].blink(3, 0.5)
+            leds[2].blink(3, 0.5)
+        # if password == prePassword:
+        #     for i in len(str(prePassword)):
+        #         leds[i].blink(3, 0.5)
+        # else:
+        #     leds[0].blink(3, 0.5)
+        #     leds[1].blink(3, 0.5)
+        #     leds[2].blink(3, 0.5)
+
 except KeyboardInterrupt:
     pass
 finally:
-    gpio.cleanup()
